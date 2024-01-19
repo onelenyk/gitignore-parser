@@ -1,6 +1,5 @@
-[![](https://jitpack.io/v/onelenyk/gitignore-parser.svg)](https://jitpack.io/#onelenyk/gitignore-parser)
-
 # GitIgnoreParser
+[![](https://jitpack.io/v/onelenyk/gitignore-parser.svg)](https://jitpack.io/#onelenyk/gitignore-parser)
 
 GitIgnoreParser is an advanced Kotlin library designed to parse `.gitignore` files and determine file exclusions based
 on gitignore specifications with efficiency and precision. This tool is particularly useful for developers looking to
@@ -36,7 +35,7 @@ Add the dependency:
 
 ```gradle
 dependencies {
-   implementation 'com.github.YourUsername:GitIgnoreParser:Tag'
+    implementation 'com.github.onelenyk:gitignore-parser:v0.1.0'
 }
 ```
 
