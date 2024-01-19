@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.6.10" // Use the appropriate Kotlin version
     id("com.github.johnrengelman.shadow") version "7.0.0" // Shadow plugin for creating a fat JAR
     id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
-
     `maven-publish` // Required for publishing the library
 }
 
