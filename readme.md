@@ -20,13 +20,13 @@ programmatically apply `.gitignore` rules in their Kotlin-based projects.
 
 ### Using JitPack
 
-Add the JitPack repository to your build file:
+Add the JitPack repository to your `build.gradle.kts`:
 
 ```gradle
 allprojects {
     repositories {
         ...
-        maven { url 'https://jitpack.io' }
+        maven(url = "https://jitpack.io")
     }
 }
 ```
@@ -35,7 +35,7 @@ Add the dependency:
 
 ```gradle
 dependencies {
-    implementation 'com.github.onelenyk:gitignore-parser:v0.1.0'
+    implementation ("com.github.onelenyk:gitignore-parser:v0.1.0")
 }
 ```
 
