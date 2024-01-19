@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/onelenyk/gitignore-parser.svg)](https://jitpack.io/#onelenyk/gitignore-parser)
+
 # GitIgnoreParser
 
 GitIgnoreParser is an advanced Kotlin library designed to parse `.gitignore` files and determine file exclusions based
