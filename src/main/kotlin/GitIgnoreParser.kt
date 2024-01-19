@@ -2,7 +2,12 @@ import java.io.File
 
 class GitIgnoreParser(
     private val gitIgnoreFilePath: String,
-    private val customRules: List<String> = listOf(".git", ".idea", "*.jar"),
+    private val customRules: List<String> =
+        listOf(
+            ".*\\.idea(/|\$)",
+            ".*\\.git(/|\$)",
+            ".*\\.jar\$",
+        ),
     private val enableLogging: Boolean = true,
 ) {
     private val regexPatterns = mutableListOf<Regex>()
@@ -16,7 +21,11 @@ class GitIgnoreParser(
 
     private fun addCustomRules() {
         customRules.forEach { rule ->
-            processLine(rule)
+            if (rule.isNotEmpty()) {
+                val regexPattern = Regex(rule)
+                regexPatterns.add(regexPattern)
+                log("Processed pattern: $rule as ${regexPattern.pattern}", isFine = true)
+            }
         }
         log("Custom rules added.")
     }
@@ -34,27 +43,28 @@ class GitIgnoreParser(
 
     private fun processLine(line: String) {
         val trimmedLine = line.trim()
-        if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#")) {
+        if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#") && !trimmedLine.startsWith("!")) {
             val regexPattern = convertGlobToRegex(trimmedLine)
             regexPatterns.add(regexPattern)
-            log("Processed pattern: $trimmedLine", isFine = true)
+            log("Processed pattern: $line as ${regexPattern.pattern}", isFine = true)
         }
     }
 
     private fun convertGlobToRegex(pattern: String): Regex {
         var regex =
             pattern
-                .trimStart('/')
                 .replace(".", "\\.")
                 .replace("*", ".*")
                 .replace("?", ".")
 
+        // If the pattern starts with a '/', it should be matched from the beginning of the path.
         if (pattern.startsWith("/")) {
             regex = "^$regex"
         }
 
+        // Adjust patterns ending with '/' to match directories anywhere in the path.
         if (pattern.endsWith("/")) {
-            regex += "(|.*/.*)"
+            regex = ".*$regex(|.*/.*)"
         } else {
             regex = "(^|/.*/)$regex"
         }
@@ -68,7 +78,7 @@ class GitIgnoreParser(
 
     fun isExcludedByGitignoreWithPattern(relativePath: String): String? {
         return regexPatterns.firstOrNull { regex ->
-            regex.containsMatchIn(relativePath)
+            regex.matches(relativePath)
         }?.pattern
     }
 
