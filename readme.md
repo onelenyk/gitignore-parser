@@ -98,86 +98,25 @@ insights into its operation.
 ```plaintext
 ℹ️ Initializing GitIgnoreParser
 🔍 Processed pattern: .gradle as (^|/.*/)\.gradle
-🔍 Processed pattern: build/ as .*build/(|.*/.*)
-🔍 Processed pattern: .idea/modules.xml as (^|/.*/)\.idea/modules\.xml
-🔍 Processed pattern: .idea/jarRepositories.xml as (^|/.*/)\.idea/jarRepositories\.xml
-🔍 Processed pattern: .idea/compiler.xml as (^|/.*/)\.idea/compiler\.xml
-🔍 Processed pattern: .idea/libraries/ as .*\.idea/libraries/(|.*/.*)
-🔍 Processed pattern: *.iws as (^|/.*/).*\.iws
-🔍 Processed pattern: *.iml as (^|/.*/).*\.iml
-🔍 Processed pattern: *.ipr as (^|/.*/).*\.ipr
-🔍 Processed pattern: out/ as .*out/(|.*/.*)
-🔍 Processed pattern: .apt_generated as (^|/.*/)\.apt_generated
-🔍 Processed pattern: .classpath as (^|/.*/)\.classpath
-🔍 Processed pattern: .factorypath as (^|/.*/)\.factorypath
-🔍 Processed pattern: .project as (^|/.*/)\.project
-🔍 Processed pattern: .settings as (^|/.*/)\.settings
-🔍 Processed pattern: .springBeans as (^|/.*/)\.springBeans
-🔍 Processed pattern: .sts4-cache as (^|/.*/)\.sts4-cache
-🔍 Processed pattern: bin/ as .*bin/(|.*/.*)
-🔍 Processed pattern: /nbproject/private/ as .*^/nbproject/private/(|.*/.*)
-🔍 Processed pattern: /nbbuild/ as .*^/nbbuild/(|.*/.*)
-🔍 Processed pattern: /dist/ as .*^/dist/(|.*/.*)
-🔍 Processed pattern: /nbdist/ as .*^/nbdist/(|.*/.*)
-🔍 Processed pattern: /.nb-gradle/ as .*^/\.nb-gradle/(|.*/.*)
-🔍 Processed pattern: .vscode/ as .*\.vscode/(|.*/.*)
+...
 🔍 Processed pattern: .DS_Store as (^|/.*/)\.DS_Store
 ℹ️ Loaded and parsed .gitignore successfully.
 🔍 Processed pattern: .*\.idea(/|$) as .*\.idea(/|$)
-🔍 Processed pattern: .*\.git(/|$) as .*\.git(/|$)
+...
 🔍 Processed pattern: .*\.jar$ as .*\.jar$
 ℹ️ Custom rules added.
 ℹ️ Initialization complete. Total patterns loaded: 28
 🔍 Starting file processing
 ➕ Included:  (DIRECTORY)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/readme.md (FILE)
-➕ Included: gradle (DIRECTORY)
-➕ Included: gradle/wrapper (DIRECTORY)
-➖ Excluded: /Users/lenyk/IdeaProjects/gitignore-parser/gradle/wrapper/gradle-wrapper.jar (FILE) by patter .*\.jar$
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/gradle/wrapper/gradle-wrapper.properties (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/gradlew (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/.gitignore (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/build.gradle.kts (FILE)
-➖ Excluded: .gradle (DIRECTORY) by patter (^|/.*/)\.gradle
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/settings.gradle.kts (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/gradle.properties (FILE)
-➕ Included: build (DIRECTORY)
-➕ Included: build/classes (DIRECTORY)
-➖ Excluded: build/classes/kotlin (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: build/kotlin (DIRECTORY)
-➖ Excluded: build/kotlin/sessions (DIRECTORY) by patter .*build/(|.*/.*)
-➖ Excluded: build/kotlin/compileKotlin (DIRECTORY) by patter .*build/(|.*/.*)
-➖ Excluded: .git (DIRECTORY) by patter .*\.git(/|$)
+➖ Excluded: build/kotlin/compileKotlin (DIRECTORY) by pattern .*build/(|.*/.*)
+➖ Excluded: .git (DIRECTORY) by pattern .*\.git(/|$)
+...
 ➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/gradlew.bat (FILE)
-➖ Excluded: .idea (DIRECTORY) by patter .*\.idea(/|$)
-➕ Included: src (DIRECTORY)
-➕ Included: src/test (DIRECTORY)
-➕ Included: src/test/resources (DIRECTORY)
-➕ Included: src/test/kotlin (DIRECTORY)
-➕ Included: src/build (DIRECTORY)
-➕ Included: src/build/snapshot (DIRECTORY)
-➖ Excluded: src/build/snapshot/kotlin (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/build/classes (DIRECTORY)
-➖ Excluded: src/build/classes/kotlin (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/build/publications (DIRECTORY)
-➖ Excluded: src/build/publications/mavenJava (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/build/kotlin (DIRECTORY)
-➖ Excluded: /Users/lenyk/IdeaProjects/gitignore-parser/src/build/kotlin/gitignoreparser010jar-classes.txt (FILE) by patter .*build/(|.*/.*)
-➖ Excluded: src/build/kotlin/sessions (DIRECTORY) by patter .*build/(|.*/.*)
-➖ Excluded: src/build/kotlin/compileKotlin (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/build/libs (DIRECTORY)
-➖ Excluded: /Users/lenyk/IdeaProjects/gitignore-parser/src/build/libs/gitignore-parser-0.1.0.jar (FILE) by patter .*build/(|.*/.*)
-➕ Included: src/build/intermediates (DIRECTORY)
-➖ Excluded: src/build/intermediates/ktLint (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/build/tmp (DIRECTORY)
-➖ Excluded: src/build/tmp/jar (DIRECTORY) by patter .*build/(|.*/.*)
-➖ Excluded: src/build/tmp/publishMavenJavaPublicationToMavenLocal (DIRECTORY) by patter .*build/(|.*/.*)
-➖ Excluded: src/build/tmp/shadowJar (DIRECTORY) by patter .*build/(|.*/.*)
+➖ Excluded: .idea (DIRECTORY) by pattern .*\.idea(/|$)
+➖ Excluded: src/build/tmp/shadowJar (DIRECTORY) by pattern .*build/(|.*/.*)
 ➕ Included: src/build/reports (DIRECTORY)
-➖ Excluded: src/build/reports/ktlint (DIRECTORY) by patter .*build/(|.*/.*)
-➕ Included: src/main (DIRECTORY)
-➕ Included: src/main/resources (DIRECTORY)
-➕ Included: src/main/kotlin (DIRECTORY)
+...
+➖ Excluded: src/build/reports/ktlint (DIRECTORY) by pattern .*build/(|.*/.*)
 ➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/FileProcessor.kt (FILE)
 ➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/Main.kt (FILE)
 ➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/GitIgnoreParser.kt (FILE)
