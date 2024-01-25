@@ -6,6 +6,7 @@ import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
 
@@ -17,7 +18,7 @@ class FileProcessor(
     private val gitignoreParser = GitIgnoreParser(customRules = customRules, rootDirectory)
 
     // Customizable file processing function
-    private var fileProcessorFunction: (Path) -> Unit = { path ->
+    private var fileProcessorFunction: (Path) -> Unit = { _ ->
     }
 
     fun process() {
@@ -65,7 +66,7 @@ class FileProcessor(
                         val niceFile = gitignoreParser.path(file)
 
                         if (parentRules != null) {
-                            val pattern = Path.of(parentRules.key).relativize(niceFile)
+                            val pattern = Paths.get(parentRules.key).relativize(niceFile)
                             val key = pattern.ifEmpty(nicePath.fileName)
 
                             val excludingPattern = parentRules.excludingPattern(key.toString())
@@ -103,7 +104,7 @@ class FileProcessor(
                     val parentRules = gitignoreParser.getRulesForDirectory(nicePath)
 
                     return if (parentRules != null) {
-                        val pattern = Path.of(parentRules.key).relativize(nicePath)
+                        val pattern = Paths.get(parentRules.key).relativize(nicePath)
                         val key = pattern.ifEmpty(nicePath.fileName)
 
                         val excludingPattern = parentRules.excludingPattern(key.toString())
