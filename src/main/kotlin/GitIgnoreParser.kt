@@ -1,99 +1,45 @@
-import java.io.File
+import util.Logs.log
+import java.nio.file.Path
 
 class GitIgnoreParser(
-    private val gitIgnoreFilePath: String,
-    private val customRules: List<String> =
-        listOf(
-            ".*\\.idea(/|\$)",
-            ".*\\.git(/|\$)",
-            ".*\\.jar\$",
-        ),
-    private val enableLogging: Boolean = true,
+    val customRules: List<String> = emptyList(),
+    val rootDirectory: Path,
 ) {
-    private val regexPatterns = mutableListOf<Regex>()
+    private val rulesMap = mutableMapOf<String, GitignoreRules>()
 
-    init {
-        log("Initializing GitIgnoreParser")
-        loadAndParseGitIgnore()
-        addCustomRules()
-        log("Initialization complete. Total patterns loaded: ${regexPatterns.size}")
+    fun path(directory: Path): Path {
+        val basePath = rootDirectory.parent
+        val extractedPartSecond = basePath.relativize(directory)
+        return extractedPartSecond
     }
 
-    private fun addCustomRules() {
-        customRules.forEach { rule ->
-            if (rule.isNotEmpty()) {
-                val regexPattern = Regex(rule)
-                regexPatterns.add(regexPattern)
-                log("Processed pattern: $rule as ${regexPattern.pattern}", isFine = true)
-            }
-        }
-        log("Custom rules added.")
-    }
-
-    private fun loadAndParseGitIgnore() {
+    fun parseGitignore(directory: Path) {
         try {
-            File(gitIgnoreFilePath).forEachLine { line ->
-                processLine(line)
+            val gitignoreFile = directory.resolve(".gitignore").toFile()
+            if (gitignoreFile.exists()) {
+                val rules = gitignoreFile.readLines()
+                val key = path(directory).toString()
+                rulesMap[key] = GitignoreRules(rawRules = rules, customRules = customRules, key = key)
+                log("Loaded and parsed .gitignore successfully.")
+            } else {
+                log("Error loading .gitignore file", isError = true)
             }
-            log("Loaded and parsed .gitignore successfully.")
         } catch (e: Exception) {
             log("Error loading .gitignore file: ${e.message}", isError = true)
+            throw e
         }
     }
 
-    private fun processLine(line: String) {
-        val trimmedLine = line.trim()
-        if (trimmedLine.isNotEmpty() && !trimmedLine.startsWith("#") && !trimmedLine.startsWith("!")) {
-            val regexPattern = convertGlobToRegex(trimmedLine)
-            regexPatterns.add(regexPattern)
-            log("Processed pattern: $line as ${regexPattern.pattern}", isFine = true)
-        }
-    }
-
-    private fun convertGlobToRegex(pattern: String): Regex {
-        var regex =
-            pattern
-                .replace(".", "\\.")
-                .replace("*", ".*")
-                .replace("?", ".")
-
-        // If the pattern starts with a '/', it should be matched from the beginning of the path.
-        if (pattern.startsWith("/")) {
-            regex = "^$regex"
-        }
-
-        // Adjust patterns ending with '/' to match directories anywhere in the path.
-        if (pattern.endsWith("/")) {
-            regex = ".*$regex(|.*/.*)"
-        } else {
-            regex = "(^|/.*/)$regex"
-        }
-
-        return Regex(regex)
-    }
-
-    fun isExcludedByGitignore(relativePath: String): Boolean {
-        return regexPatterns.any { it.containsMatchIn(relativePath) }
-    }
-
-    fun isExcludedByGitignoreWithPattern(relativePath: String): String? {
-        return regexPatterns.firstOrNull { regex ->
-            regex.matches(relativePath)
-        }?.pattern
-    }
-
-    private fun log(
-        message: String,
-        isError: Boolean = false,
-        isFine: Boolean = false,
-    ) {
-        if (!enableLogging) return
-        val emoji =
-            when {
-                isError -> "❌"
-                isFine -> "🔍"
-                else -> "ℹ️"
+    fun getRulesForDirectory(directory: Path): GitignoreRules? {
+        var currentDir: Path? = directory
+        while (currentDir != null) {
+            val key = currentDir.toString()
+            val rules = rulesMap[key]
+            if (rules != null) {
+                return rules
             }
-        println("$emoji $message")
+            currentDir = currentDir.parent
+        }
+        return null // No rules found up to the root
     }
 }
