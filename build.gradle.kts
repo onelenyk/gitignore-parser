@@ -13,7 +13,6 @@ repositories {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
     testImplementation(kotlin("test"))
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
@@ -40,7 +39,7 @@ tasks.named<Jar>("jar") {
 tasks.shadowJar {
     archiveClassifier.set("")
     manifest {
-        attributes["Main-Class"] = group + "MainKt" // Replace with your main class
+        attributes["Main-Class"] = group + "LibraryKt" // Replace with your main class
     }
 }
 
