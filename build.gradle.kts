@@ -6,7 +6,7 @@ plugins {
 }
 
 group = "dev.onelenyk" // Replace with your group id
-version = "0.1.0" // Your library version
+version = "0.1.1" // Your library version
 
 repositories {
     mavenCentral()
