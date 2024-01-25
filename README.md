@@ -68,7 +68,8 @@ The GitIgnoreParser library is designed to be straightforward and easy to integr
 4. **Processing Entire Directory**: To process all files in a directory, you can utilize the `FileProcessor` class. It traverses the directory, checking each file against the `.gitignore` rules and compiling a list of included files.
 
     ```kotlin
-
+    import dev.onelenyk.FileProcessor
+   
     val fileProcessor = FileProcessor(rootDirectory = rootPath)
     fileProcessor.process()
     ```

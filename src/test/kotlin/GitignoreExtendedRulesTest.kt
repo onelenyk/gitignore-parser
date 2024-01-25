@@ -1,3 +1,4 @@
+import dev.onelenyk.GitignoreRules
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull

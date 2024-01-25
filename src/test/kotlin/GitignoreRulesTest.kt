@@ -1,3 +1,4 @@
+import dev.onelenyk.GitignoreRules
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
