@@ -1,117 +1,133 @@
-import java.io.File
+import util.FileProcessorAnalytics
+import util.Logs.log
 import java.io.IOException
-import java.nio.file.FileVisitOption
 import java.nio.file.FileVisitResult
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.SimpleFileVisitor
 import java.nio.file.attribute.BasicFileAttributes
-import java.util.EnumSet
 
-class FileProcessor(val projectRoot: Path, private val gitIgnoreLoader: GitIgnoreParser) {
-    private var fileCount = 0
-    private var directoryCount = 0
-    private var skippedFileCount = 0
-    private var selectedFileCount = 0
-    private var skippedDirectoryCount = 0
-    private var totalItemCount = 0
-    private val usedPatterns = mutableSetOf<String>()
+class FileProcessor(
+    private val rootDirectory: Path,
+    val customRules: List<String> = emptyList(),
+) {
+    private val analytics = FileProcessorAnalytics()
+    private val gitignoreParser = GitIgnoreParser(customRules = customRules, rootDirectory)
 
-    fun processFiles(): MutableList<Path> {
-        val filteredFiles = mutableListOf<Path>()
+    // Customizable file processing function
+    private var fileProcessorFunction: (Path) -> Unit = { path ->
+    }
+
+    fun process() {
+        val includedPaths = mutableListOf<Path>()
         log("Starting file processing")
+
         Files.walkFileTree(
-            projectRoot,
-            EnumSet.of(FileVisitOption.FOLLOW_LINKS),
-            Int.MAX_VALUE,
+            rootDirectory,
             object : SimpleFileVisitor<Path>() {
-                override fun visitFile(
-                    file: Path?,
-                    attrs: BasicFileAttributes?,
+                override fun preVisitDirectory(
+                    dir: Path,
+                    attrs: BasicFileAttributes,
                 ): FileVisitResult {
-                    totalItemCount++
-                    file?.let { filePath ->
-                        fileCount++
-                        if (!attrs?.isDirectory!!) {
-                            val relativePath = projectRoot.relativize(filePath).toString().replace(File.separatorChar, '/')
-
-                            val pattern = gitIgnoreLoader.isExcludedByGitignoreWithPattern(relativePath)
-
-                            if (pattern == null) {
-                                log("Included: $filePath (FILE)", prefix = "➕")
-                                filteredFiles.add(file)
-                                selectedFileCount++
-                            } else {
-                                pattern.let { usedPatterns.add(it) }
-
-                                skippedFileCount++
-                                log("Excluded: $filePath (FILE) by patter $pattern", prefix = "➖")
-                            }
+                    try {
+                        if (Files.exists(dir.resolve(".gitignore"))) {
+                            log("Gitignore file detected in: ${dir.toAbsolutePath()} ", isInfo = true)
+                            // Parse .gitignore if present in this directory
+                            gitignoreParser.parseGitignore(dir)
                         }
+
+                        // Check if the directory should be excluded based on parent rules
+                        if (shouldExcludeDirectory(dir)) {
+                            return FileVisitResult.SKIP_SUBTREE
+                        } else {
+                            val nicePath = gitignoreParser.path(dir)
+                            analytics.onDirIncluded(nicePath)
+                        }
+
+                        return FileVisitResult.CONTINUE
+                    } catch (e: IOException) {
+                        log("Failed to visit directory: $dir (ERROR)", isError = true)
+
+                        return FileVisitResult.SKIP_SUBTREE
                     }
-                    return FileVisitResult.CONTINUE
+                }
+
+                override fun visitFile(
+                    file: Path,
+                    attrs: BasicFileAttributes,
+                ): FileVisitResult {
+                    try {
+                        analytics.onFileAppear()
+                        val nicePath = gitignoreParser.path(file.parent)
+                        val parentRules = gitignoreParser.getRulesForDirectory(nicePath)
+                        val niceFile = gitignoreParser.path(file)
+
+                        if (parentRules != null) {
+                            val pattern = Path.of(parentRules.key).relativize(niceFile)
+                            val key = pattern.ifEmpty(nicePath.fileName)
+
+                            val excludingPattern = parentRules.excludingPattern(key.toString())
+
+                            if (excludingPattern == null) {
+                                fileProcessorFunction(file)
+                                analytics.onFileIncluded(niceFile)
+                                includedPaths.add(niceFile)
+                            } else {
+                                analytics.onFileExcluded(niceFile, excludingPattern)
+                            }
+                        } else {
+                            fileProcessorFunction(file)
+                            analytics.onFileIncluded(niceFile)
+                            includedPaths.add(niceFile)
+                        }
+
+                        return FileVisitResult.CONTINUE
+                    } catch (e: IOException) {
+                        log("Failed to visit: ${file.toAbsolutePath()} (ERROR)", isError = true)
+                        return FileVisitResult.CONTINUE
+                    }
                 }
 
                 override fun visitFileFailed(
-                    file: Path?,
-                    exc: IOException?,
+                    file: Path,
+                    exc: IOException,
                 ): FileVisitResult {
-                    file?.let { filePath ->
-                        log("Failed to visit: ${filePath.toAbsolutePath()} (ERROR)", isError = true)
-                    }
+                    log("Failed to visit: ${file.toAbsolutePath()} (ERROR)", isError = true)
                     return FileVisitResult.CONTINUE
                 }
 
-                override fun preVisitDirectory(
-                    dir: Path?,
-                    attrs: BasicFileAttributes?,
-                ): FileVisitResult {
-                    totalItemCount++
-                    dir?.let { dirPath ->
-                        directoryCount++
-                        val relativePath = projectRoot.relativize(dirPath).toString().replace(File.separatorChar, '/')
-                        val pattern = gitIgnoreLoader.isExcludedByGitignoreWithPattern(relativePath)
+                private fun shouldExcludeDirectory(dir: Path): Boolean {
+                    val nicePath = gitignoreParser.path(dir)
+                    val parentRules = gitignoreParser.getRulesForDirectory(nicePath)
 
-                        if (pattern == null) {
-                            log("Included: $relativePath (DIRECTORY)", prefix = "➕")
-                        } else {
-                            pattern.let { usedPatterns.add(it) }
-                            skippedDirectoryCount++
-                            log("Excluded: $relativePath (DIRECTORY) by patter $pattern", prefix = "➖")
-                            return FileVisitResult.SKIP_SUBTREE
+                    return if (parentRules != null) {
+                        val pattern = Path.of(parentRules.key).relativize(nicePath)
+                        val key = pattern.ifEmpty(nicePath.fileName)
+
+                        val excludingPattern = parentRules.excludingPattern(key.toString())
+                        excludingPattern?.let {
+                            analytics.onDirExcluded(nicePath, excludingPattern)
                         }
+                        excludingPattern != null
+                    } else {
+                        false
                     }
-                    return FileVisitResult.CONTINUE
                 }
             },
         )
-        log("File processing completed")
-        return filteredFiles
     }
 
-    private fun log(
-        message: String,
-        isError: Boolean = false,
-        isInfo: Boolean = false,
-        prefix: String? = null,
-    ) {
-        val emoji =
-            when {
-                isError -> "❌"
-                isInfo -> "ℹ️"
-                prefix != null -> prefix
-                else -> "🔍"
-            }
-        println("$emoji $message")
+    private fun Path.ifEmpty(default: Path): Path {
+        return if (this.isEmpty()) default else this
     }
 
-    fun printSummary() {
-        log("Summary:")
-        log("Total Items Processed: $totalItemCount", isInfo = true)
-        log("Total Files: $fileCount", isInfo = true)
-        log("Total Directories: $directoryCount", isInfo = true)
-        log("Files/Directories Skipped: $skippedFileCount", isInfo = true)
-        log("Files selected: $selectedFileCount", isInfo = true)
-        log("Patterns Used: ${usedPatterns.joinToString { "▓▓$it▓▓" }}", prefix = "\uD83D\uDCBC")
+    private fun Path.isEmpty(): Boolean {
+        return this.toString().isEmpty()
+    }
+
+    fun report() = analytics.report()
+
+    fun setFileProcessorFunction(function: (Path) -> Unit) {
+        fileProcessorFunction = function
     }
 }
