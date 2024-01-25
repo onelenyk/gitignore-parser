@@ -14,8 +14,9 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-    testImplementation("org.jetbrains.kotlin:kotlin-test")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit")
+    testImplementation(kotlin("test"))
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.0.0")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.9.2")
 }
 
 // Configure publishing
@@ -41,4 +42,8 @@ tasks.shadowJar {
     manifest {
         attributes["Main-Class"] = group + "MainKt" // Replace with your main class
     }
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
