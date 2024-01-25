@@ -28,7 +28,8 @@ class GitIgnoreParserTest {
     @Test
     fun testParseGitignore() {
         gitignoreParser.parseGitignore(tempGitignoreFile.parent)
-        val rules = gitignoreParser.getRulesForDirectory(tempGitignoreFile.parent)
+        val path = gitignoreParser.path(tempGitignoreFile.parent)
+        val rules = gitignoreParser.getRulesForDirectory(path)
         assertNotNull(rules, "Rules should not be null")
         assertEquals(expectedRules, rules.rawRules, "Parsed rules should match the written content")
     }
