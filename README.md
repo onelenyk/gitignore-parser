@@ -35,106 +35,55 @@ Add the dependency:
 
 ```gradle
 dependencies {
-    implementation ("com.github.onelenyk:gitignore-parser:v0.1.0")
+    implementation ("com.github.onelenyk:gitignore-parser:v0.1.1")
 }
 ```
 
 ## Usage
 
-The GitIgnoreParser library is seamlessly integrable into your Kotlin projects. Here’s how to use it:
+The GitIgnoreParser library is designed to be straightforward and easy to integrate into your Kotlin projects. Below is a step-by-step guide on how to use it effectively:
 
-1. **Initialize the Parser**: Create an instance of `GitIgnoreParser` by passing the path to your `.gitignore` file.
+1. **Initialization**: Start by creating an instance of the `GitIgnoreParser`. You need to provide the path to your project's root directory and optionally, any custom rules as a list of strings.
 
     ```kotlin
-    val gitIgnoreFilePath = "/path/to/your/.gitignore"
-    val parser = GitIgnoreParser(gitIgnoreFilePath)
+    val rootPath = Paths.get("/path/to/your/project").toAbsolutePath()
+    val gitIgnoreParser = GitIgnoreParser(rootDirectory = rootPath)
     ```
 
-2. **Check File Exclusion**: To determine if a specific file is excluded by the `.gitignore` rules, use
-   the `isExcludedByGitignore` method. Provide the relative path of the file to this method.
+2. **Parsing .gitignore File**: Invoke the `parseGitignore` method by passing the directory path that contains the `.gitignore` file. This will load and parse the rules defined in the file.
 
     ```kotlin
-    val relativeFilePath = "src/main/Example.kt"
-    val isExcluded = parser.isExcludedByGitignore(relativeFilePath)
+    gitIgnoreParser.parseGitignore(rootPath)
+    ```
+
+3. **Checking File Exclusion**: To determine if a specific file is excluded based on the `.gitignore` rules, use the `getRulesForDirectory` method to get the rules for the file's directory and then the `excludingPattern` method to check for exclusion.
+
+    ```kotlin
+    val filePath = rootPath.resolve("src/main/Example.kt")
+    val rules = gitIgnoreParser.getRulesForDirectory(filePath.parent)
+    val isExcluded = rules?.excludingPattern(filePath.fileName.toString()) != null
     println("Is the file excluded: $isExcluded")
     ```
 
-3. **Get Exclusion Pattern**: To find out which specific `.gitignore` pattern is causing a file to be excluded, use
-   the `isExcludedByGitignoreWithPattern` method. This returns the matching pattern, if any.
+4. **Processing Entire Directory**: To process all files in a directory, you can utilize the `FileProcessor` class. It traverses the directory, checking each file against the `.gitignore` rules and compiling a list of included files.
 
     ```kotlin
-    val exclusionPattern = parser.isExcludedByGitignoreWithPattern(relativeFilePath)
-    exclusionPattern?.let {
-        println("Excluded by pattern: $it")
-    } ?: println("File is not excluded.")
+
+    val fileProcessor = FileProcessor(rootDirectory = rootPath)
+    fileProcessor.process()
     ```
 
-4. **Process Files in a Directory**: To process all files in a directory, utilize the `FileProcessor` class. It helps in
-   traversing the directory, checking each file against the `.gitignore` rules, and compiling a list of included files.
+5. **Getting Processing Summary**: After processing the files, you can get a summary of the operation, which includes details like the total number of files processed, the number of files included and excluded, and the patterns used.
 
     ```kotlin
-    val projectRoot = Paths.get("/path/to/your/project")
-    val fileProcessor = FileProcessor(projectRoot, parser)
-    val includedFiles = fileProcessor.processFiles()
+    fileProcessor.report()
     ```
 
-5. **Print Summary**: You can print a summary of the operation after processing the files, including the total files
-   processed, files included, and patterns used.
+This Kotlin implementation of the GitIgnoreParser offers a user-friendly and efficient approach to handling `.gitignore` rules in Kotlin-based projects.
 
-    ```kotlin
-    fileProcessor.printSummary()
-    ```
 
 This Kotlin adaptation of the library offers a modern and concise approach, enhancing the user experience in
 Kotlin-based projects.
-
-## Sample Console Output
-
-To give you a better idea of how the GitIgnoreParser works in practice, here is a sample of the console output you can
-expect. This output demonstrates the library's process of evaluating files against `.gitignore` rules and provides
-insights into its operation.
-
-### Sample Log:
-
-```plaintext
-ℹ️ Initializing GitIgnoreParser
-🔍 Processed pattern: .gradle as (^|/.*/)\.gradle
-...
-🔍 Processed pattern: .DS_Store as (^|/.*/)\.DS_Store
-ℹ️ Loaded and parsed .gitignore successfully.
-🔍 Processed pattern: .*\.idea(/|$) as .*\.idea(/|$)
-...
-🔍 Processed pattern: .*\.jar$ as .*\.jar$
-ℹ️ Custom rules added.
-ℹ️ Initialization complete. Total patterns loaded: 28
-🔍 Starting file processing
-➕ Included:  (DIRECTORY)
-➖ Excluded: build/kotlin/compileKotlin (DIRECTORY) by pattern .*build/(|.*/.*)
-➖ Excluded: .git (DIRECTORY) by pattern .*\.git(/|$)
-...
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/gradlew.bat (FILE)
-➖ Excluded: .idea (DIRECTORY) by pattern .*\.idea(/|$)
-➖ Excluded: src/build/tmp/shadowJar (DIRECTORY) by pattern .*build/(|.*/.*)
-➕ Included: src/build/reports (DIRECTORY)
-...
-➖ Excluded: src/build/reports/ktlint (DIRECTORY) by pattern .*build/(|.*/.*)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/FileProcessor.kt (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/Main.kt (FILE)
-➕ Included: /Users/lenyk/IdeaProjects/gitignore-parser/src/main/kotlin/GitIgnoreParser.kt (FILE)
-🔍 File processing completed
-🔍 Summary:
-ℹ️ Total Items Processed: 52
-ℹ️ Total Files: 14
-ℹ️ Total Directories: 38
-ℹ️ Files/Directories Skipped: 3
-ℹ️ Files selected: 11
-💼 Patterns Used: ▓▓.*\.jar$▓▓, ▓▓(^|/.*/)\.gradle▓▓, ▓▓.*build/(|.*/.*)▓▓, ▓▓.*\.git(/|$)▓▓, ▓▓.*\.idea(/|$)▓▓
-```
-
-This log shows the detailed process of how the GitIgnoreParser assesses each file, including any `.gitignore` patterns
-that apply, and the final decision on whether each file is ignored or included.
-
-Note: The actual output may vary based on your project's `.gitignore` file and the specific files being processed.
 
 ## Contributions
 
