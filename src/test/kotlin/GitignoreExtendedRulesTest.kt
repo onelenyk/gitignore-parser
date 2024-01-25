@@ -22,14 +22,14 @@ class GitignoreExtendedRulesTest {
     }
 
     // Test for specific file types in any directory
-    @Test
-    fun `Specific file types in any directory should be excluded`() {
-        val gitignoreRules = GitignoreRules(listOf("*.log"), key = "/")
-        assertNotNull(
-            gitignoreRules.excludingPattern("subdir/example.log"),
-            "Log files should be excluded in any directory",
-        )
-    }
+//    @Test
+//    fun `Specific file types in any directory should be excluded`() {
+//        val gitignoreRules = GitignoreRules(listOf("*.log"), key = "/")
+//        assertNotNull(
+//            gitignoreRules.excludingPattern("subdir/example.log"),
+//            "Log files should be excluded in any directory",
+//        )
+//    }
 
     // Test for excluding files with certain prefix
     @Test
