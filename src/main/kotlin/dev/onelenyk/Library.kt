@@ -1,12 +1,12 @@
 package dev.onelenyk
 
-import java.nio.file.Path
+import java.nio.file.Paths
 
 class Library {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            val rootPath = Path.of("/Users/lenyk/projects/android-driver").toAbsolutePath()
+            val rootPath = Paths.get("/Users/lenyk/projects/android-driver").toAbsolutePath()
 
             //   val rootPath = Path.of("").toAbsolutePath()
             val fileProcessor =
