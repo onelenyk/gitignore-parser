@@ -1,6 +1,6 @@
-package util
+package dev.onelenyk.util
 
-import util.Logs.log
+import dev.onelenyk.util.Logs.log
 import java.nio.file.Path
 
 class FileProcessorAnalytics {

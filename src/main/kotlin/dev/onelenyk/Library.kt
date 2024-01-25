@@ -1,3 +1,5 @@
+package dev.onelenyk
+
 import java.nio.file.Path
 
 class Library {

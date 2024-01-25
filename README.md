@@ -46,6 +46,8 @@ The GitIgnoreParser library is designed to be straightforward and easy to integr
 1. **Initialization**: Start by creating an instance of the `GitIgnoreParser`. You need to provide the path to your project's root directory and optionally, any custom rules as a list of strings.
 
     ```kotlin
+    import dev.onelenyk.GitIgnoreParser
+   
     val rootPath = Paths.get("/path/to/your/project").toAbsolutePath()
     val gitIgnoreParser = GitIgnoreParser(rootDirectory = rootPath)
     ```

@@ -1,5 +1,7 @@
-import util.FileProcessorAnalytics
-import util.Logs.log
+package dev.onelenyk
+
+import dev.onelenyk.util.FileProcessorAnalytics
+import dev.onelenyk.util.Logs.log
 import java.io.IOException
 import java.nio.file.FileVisitResult
 import java.nio.file.Files

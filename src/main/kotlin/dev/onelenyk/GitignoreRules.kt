@@ -1,4 +1,6 @@
-import util.Logs.log
+package dev.onelenyk
+
+import dev.onelenyk.util.Logs.log
 
 class GitignoreRules(
     val rawRules: List<String>,

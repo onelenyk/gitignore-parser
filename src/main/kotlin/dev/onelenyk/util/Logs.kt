@@ -1,4 +1,4 @@
-package util
+package dev.onelenyk.util
 
 object Logs {
     fun log(
