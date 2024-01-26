@@ -92,6 +92,12 @@ Kotlin-based projects.
 
 Contributions are welcome! Please feel free to submit a pull request or open an issue for any improvements or bug fixes.
 
+## Documentation
+
+For more detailed information about how to use [Your Project Name], as well as a comprehensive overview of its features and functionalities, please visit our [documentation](URL-to-your-documentation).
+
+This documentation is generated automatically from the source code and is updated regularly to reflect the latest changes and features.
+
 ## Acknowledgements
 
 - **onelenyk** - Initial work and maintenance.
