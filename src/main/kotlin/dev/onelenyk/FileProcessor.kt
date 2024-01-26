@@ -13,7 +13,7 @@ import java.nio.file.attribute.BasicFileAttributes
 class FileProcessor(
     private val rootDirectory: Path,
     val customRules: List<String> = emptyList(),
-) {
+) : IFileProcessor {
     private val analytics = FileProcessorAnalytics()
     private val gitignoreParser = GitIgnoreParser(customRules = customRules, rootDirectory)
 
@@ -21,7 +21,7 @@ class FileProcessor(
     private var fileProcessorFunction: (Path) -> Unit = { _ ->
     }
 
-    fun process() {
+    override fun process() {
         val includedPaths = mutableListOf<Path>()
         log("Starting file processing")
 

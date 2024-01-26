@@ -6,7 +6,7 @@ class GitignoreRules(
     val rawRules: List<String>,
     val customRules: List<String> = emptyList(),
     val key: String = "",
-) {
+) : IGitignoreRules {
     private val regexCache = mutableMapOf<String, Regex>()
     private val regexRules: List<Regex> =
         rawRules.mapNotNull { processLine(it) }
@@ -143,7 +143,7 @@ class GitignoreRules(
         }
     }
 
-    fun excludingPattern(filePath: String): Regex? {
+    override fun excludingPattern(filePath: String): Regex? {
         return regexRules.firstOrNull { regex -> regex.matches(filePath) }
     }
 }
