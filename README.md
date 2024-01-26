@@ -94,7 +94,7 @@ Contributions are welcome! Please feel free to submit a pull request or open an 
 
 ## Documentation
 
-For more detailed information about how to use GitIgnoreParser as well as a comprehensive overview of its features and functionalities, please visit our [documentation](URL-to-your-documentation).
+For more detailed information about how to use GitIgnoreParser as well as a comprehensive overview of its features and functionalities, please visit our [documentation](https://javadoc.jitpack.io/dev/onelenyk/gitignore-parser/latest/javadoc/index.html).
 
 This documentation is generated automatically from the source code and is updated regularly to reflect the latest changes and features.
 
