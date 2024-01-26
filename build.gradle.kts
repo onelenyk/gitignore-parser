@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     kotlin("jvm") version "1.6.10" // Use the appropriate Kotlin version
     id("com.github.johnrengelman.shadow") version "7.0.0" // Shadow plugin for creating a fat JAR
@@ -6,8 +8,15 @@ plugins {
     `maven-publish` // Required for publishing the library
 }
 
+// Read properties file
+val versionProperties =
+    Properties().apply {
+        load(file("version.properties").inputStream())
+    }
+
+// Set the library version
+version = versionProperties["version"] as String
 group = "dev.onelenyk" // Replace with your group id
-version = "0.1.3" // Your library version
 
 repositories {
     mavenCentral()
