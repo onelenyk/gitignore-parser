@@ -6,16 +6,16 @@ import java.nio.file.Path
 class GitIgnoreParser(
     val customRules: List<String> = emptyList(),
     val rootDirectory: Path,
-) {
+) : IGitIgnoreParser {
     private val rulesMap = mutableMapOf<String, GitignoreRules>()
 
-    fun path(directory: Path): Path {
+    override fun path(directory: Path): Path {
         val basePath = rootDirectory.parent
         val extractedPartSecond = basePath.relativize(directory)
         return extractedPartSecond
     }
 
-    fun parseGitignore(directory: Path) {
+    override fun parseGitignore(directory: Path) {
         try {
             val gitignoreFile = directory.resolve(".gitignore").toFile()
             if (gitignoreFile.exists()) {
@@ -32,7 +32,7 @@ class GitIgnoreParser(
         }
     }
 
-    fun getRulesForDirectory(directory: Path): GitignoreRules? {
+    override fun getRulesForDirectory(directory: Path): GitignoreRules? {
         var currentDir: Path? = directory
         while (currentDir != null) {
             val key = currentDir.toString()

@@ -128,9 +128,9 @@ class FileProcessor(
         return this.toString().isEmpty()
     }
 
-    fun report() = analytics.report()
+    override fun report() = analytics.report()
 
-    fun setFileProcessorFunction(function: (Path) -> Unit) {
+    override fun setFileProcessorFunction(function: (Path) -> Unit) {
         fileProcessorFunction = function
     }
 }
