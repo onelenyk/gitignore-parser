@@ -21,7 +21,7 @@ class FileProcessor(
     private var fileProcessorFunction: (Path) -> Unit = { _ ->
     }
 
-    override fun process() {
+    override fun process(): List<Path> {
         val includedPaths = mutableListOf<Path>()
         log("Starting file processing")
 
@@ -118,6 +118,7 @@ class FileProcessor(
                 }
             },
         )
+        return includedPaths.toList()
     }
 
     private fun Path.ifEmpty(default: Path): Path {

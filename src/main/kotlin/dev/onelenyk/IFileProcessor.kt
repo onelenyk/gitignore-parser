@@ -14,8 +14,10 @@ interface IFileProcessor {
      *
      * This method walks through the file tree, applying .gitignore rules to each file and directory
      * to determine whether they should be included or excluded.
+     *
+     * @return A list containing all not excluded path's.
      */
-    fun process()
+    fun process(): List<Path>
 
     /**
      * Generates and returns a summary report of the file processing.
