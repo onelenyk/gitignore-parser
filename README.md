@@ -35,7 +35,7 @@ Add the dependency:
 
 ```gradle
 dependencies {
-    implementation ("dev.onelenyk:gitignore-parser:v0.1.4")
+    implementation ("dev.onelenyk:gitignore-parser:v0.1.6")
 }
 ```
 
